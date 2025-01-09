@@ -5,19 +5,20 @@ from collections import defaultdict
 
 
 class Corpus:
+    # Initialisation de la classe Corpus
     def __init__(self, name, authors, documents, nb_docs, nb_authors):
         self.name = name
         self.authors = authors
         self.documents = documents
         self.nb_docs = nb_docs
         self.nb_authors = nb_authors
-
+    # Affichage de l'objet
     def __str__(self):
         return f"Corpus: {self.name}, Nombre d'auteurs: {self.nb_authors}, Nombre de documents: {self.nb_docs}"
-
     def __repr__(self):
         return f"Corpus: {self.name}, Nombre d'auteurs: {self.nb_authors}, Nombre de documents: {self.nb_docs}"
 
+    # Visualisation des documents du corpus selon un tri donné
     def show(self, n_docs=1, tri="abc"):
         if tri == "abc":
             docs = sorted(self.documents.values(), key=lambda x: x.titre)[:n_docs]
@@ -27,16 +28,16 @@ class Corpus:
             raise ValueError("tri doit être 'abc' ou 'date'.")
 
         print("\n".join(list(map(repr, docs))))
-
+    # Sauvegarde du corpus dans un fichier
     def save(self, filename):
         with open(filename, 'wb') as f:
             pickle.dump(self, f)
-
+    # Chargement d'un corpus depuis un fichier
     @staticmethod
     def load(filename):
         with open(filename, 'rb') as f:
             return pickle.load(f)
-
+    # Recherche de documents contenant un mot-clé
     def search(self, keyword):
         keyword = keyword.lower()
         pattern = re.compile(rf'\b{keyword}\b', re.IGNORECASE)
@@ -54,7 +55,7 @@ class Corpus:
                     results.append(f"Document {doc.titre}: {context}")
 
         return results if results else "Aucun résultat trouvé."
-
+    # Recherche de concordances d'une expression dans les documents du corpus
     def concorde(self, expression, taille_contexte=10):
         motif = re.compile(rf'\b{expression}\b', re.IGNORECASE)
         resultats = []
@@ -74,7 +75,7 @@ class Corpus:
 
         df_concordance = pd.DataFrame(resultats, columns=['Contexte gauche', 'Motif trouvé', 'Contexte droit'])
         return df_concordance if not df_concordance.empty else "Aucun résultat trouvé."
-
+    # Nettoyage du texte des documents du corpus
     def nettoyer_texte(self):
         texte_nettoye = {}
         for doc_id, doc in self.documents.items():
@@ -84,7 +85,7 @@ class Corpus:
             texte = texte.lower()
             texte_nettoye[doc_id] = texte
         return texte_nettoye
-
+    # Création du vocabulaire du corpus
     def vocabulaire(self):
         vocab = set()
         texte_nettoye = self.nettoyer_texte()
@@ -92,7 +93,7 @@ class Corpus:
             mots = texte.split()
             vocab.update(mots)
         return sorted(vocab)
-
+    # Calcul de la fréquence d'occurrence des mots dans le corpus
     def nb_occurence(self):
         occurences_totales = defaultdict(int)
         freq_documents = defaultdict(int)
@@ -117,7 +118,7 @@ class Corpus:
         df_freq = df_freq.sort_values(by='Occurences totales', ascending=False).reset_index(drop=True)
 
         return df_freq
-
+    # Affichage de statistiques sur le corpus
     def stats(self, n=20):
         vocabulaire = self.vocabulaire()
         nb_mots_differents = len(vocabulaire)
