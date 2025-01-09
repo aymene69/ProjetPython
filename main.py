@@ -7,6 +7,7 @@ import pickle
 from Document import DocumentFactory
 from Author import Author
 from Corpus import Corpus
+from SearchEngine import SearchEngine
 
 docs_r = []
 docs_a = []
@@ -97,5 +98,6 @@ for elem in df.itertuples():
 
 corpus = Corpus("Corpus sur le football", list(id2aut.values()), id2doc, len(id2doc), len(id2aut))
 
-corpus.show()
-
+search_engine = SearchEngine(corpus)
+results = search_engine.search("football")
+print(results)
